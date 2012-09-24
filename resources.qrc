@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/densitymap" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
