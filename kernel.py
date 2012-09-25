@@ -5,13 +5,13 @@ from osgeo import gdal, osr
     
     
 class Kernel2d(object):
-    def __init__(self, lon, lat, bw=None):
+    def __init__(self, lon, lat, bw=None, size=400):
         self.x = lon
         self.y = lat
         self.bw = bw
         self.values = np.vstack([self.x, self.y])
-        self.X, self.Y = np.mgrid[self.x.min():self.x.max():400j,
-                                  self.y.min():self.y.max():400j]
+        self.X, self.Y = np.mgrid[self.x.min():self.x.max():size*1j,
+                                  self.y.min():self.y.max():size*1j]
         self.positions = np.vstack([self.X.ravel(), self.Y.ravel()])
 
         

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_densitymap.ui'
 #
-# Created: Sun Sep 23 20:37:01 2012
+# Created: Tue Sep 25 19:00:07 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_DensityMap(object):
     def setupUi(self, DensityMap):
         DensityMap.setObjectName(_fromUtf8("DensityMap"))
-        DensityMap.resize(276, 146)
+        DensityMap.resize(276, 213)
         self.verticalLayout = QtGui.QVBoxLayout(DensityMap)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.gridLayout = QtGui.QGridLayout()
@@ -46,6 +46,15 @@ class Ui_DensityMap(object):
         self.rasterEdit = QtGui.QLineEdit(DensityMap)
         self.rasterEdit.setObjectName(_fromUtf8("rasterEdit"))
         self.gridLayout.addWidget(self.rasterEdit, 2, 1, 1, 1)
+        self.label_4 = QtGui.QLabel(DensityMap)
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.gridLayout.addWidget(self.label_4, 3, 0, 1, 1)
+        self.sizeSpinBox = QtGui.QSpinBox(DensityMap)
+        self.sizeSpinBox.setMaximum(1000)
+        self.sizeSpinBox.setSingleStep(10)
+        self.sizeSpinBox.setProperty("value", 400)
+        self.sizeSpinBox.setObjectName(_fromUtf8("sizeSpinBox"))
+        self.gridLayout.addWidget(self.sizeSpinBox, 3, 1, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
         self.buttonBox = QtGui.QDialogButtonBox(DensityMap)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -65,4 +74,5 @@ class Ui_DensityMap(object):
         self.label.setText(QtGui.QApplication.translate("DensityMap", "Point layer:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("DensityMap", "File Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.rasterEdit.setText(QtGui.QApplication.translate("DensityMap", "kde.tif", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("DensityMap", "Size (pixels):", None, QtGui.QApplication.UnicodeUTF8))
 
