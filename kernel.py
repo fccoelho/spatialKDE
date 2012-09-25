@@ -21,15 +21,22 @@ class Kernel2d(object):
         self.Z = np.reshape(self.kernel(self.positions).T, self.X.shape)
         return self.X, self.Y, self.Z
         
-    def to_geotiff(self,fname):
+    def to_geotiff(self,fname, epsg):
         '''
         saves the kernel as a GEOTIFF image
         '''
         driver = gdal.GetDriverByName("GTiff")
-        out = driver.Create(fname, len(self.X), len(self.Y), 1, gdal.GDT_Float32 )     
+        out = driver.Create(fname, len(self.X), len(self.Y), 1, gdal.GDT_Float32)
+        #pixel sizes
+        xps = (self.x.max() - self.x.min()) / float(len(self.X))
+        yps = (self.y.max() - self.y.min()) / float(len(self.Y))
+        out.SetGeoTransform((self.x.min(), xps, 0, self.y.min(), 0, yps))
+        coord_system = osr.SpatialReference()
+        coord_system.ImportFromEPSG(epsg)
+        out.SetProjection(coord_system.ExportToWkt())
         out.GetRasterBand(1).WriteArray(self.Z)
-        
-    
+
+
     def plot(self, show_points=True):
         fig = plt.figure('2D Kernel Density')
         ax = fig.add_subplot(111)

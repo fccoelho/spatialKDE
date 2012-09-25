@@ -88,7 +88,7 @@ class DensityMap:
             data = self.collectData(self.collectOptions())
             k = Kernel2d(np.array(data['X']),np.array(data['Y']))
             k.run()
-            k.to_geotiff(str(self.dlg.ui.rasterEdit.text()))
+            k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
         
     def read_kde(self):
         """
@@ -128,7 +128,7 @@ class DensityMap:
             QMessageBox.critical(self.dlg, "Kernel Density Map plugin", "No point layers available! Load at least one and re-run.")
             #~ self.emit(SIGNAL("rejected"), self.close)
             #~ self.kill()
-          
+
     def collectData(self, opt):
         """
         Extracts geometries from selected layer.
@@ -138,19 +138,23 @@ class DensityMap:
         yDict = []
         geomData = {'X': xDict,  'Y': yDict}
         # use QGis tools to extract info from layer
-        provider = opt["io"]["layerpointer"].dataProvider()
+        layer = opt["io"]["layerpointer"]
+        provider = layer.dataProvider()
+        srs = layer.srs()
+        self.epsg = srs.epsg()
+        self.srid = srs.srsid()
         allAttrs = provider.attributeIndexes()
         fields = provider.fields()
         provider.select(allAttrs)
         feat = QgsFeature()
         while provider.nextFeature(feat):
-          geom = feat.geometry()
-          pointmp = geom.asPoint()
-          xDict.append(pointmp.x())
-          yDict.append(pointmp.y())
+            geom = feat.geometry()
+            pointmp = geom.asPoint()
+            xDict.append(pointmp.x())
+            yDict.append(pointmp.y())
 
         return geomData
-        
+
     def collectOptions(self):
         """
         Collects all options in a dictionary.
