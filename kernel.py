@@ -10,8 +10,8 @@ class Kernel2d(object):
         self.y = lat
         self.bw = bw
         self.values = np.vstack([self.x, self.y])
-        self.X, self.Y = np.mgrid[self.x.min():self.x.max():200j,
-                                  self.y.min():self.y.max():200j]
+        self.X, self.Y = np.mgrid[self.x.min():self.x.max():400j,
+                                  self.y.min():self.y.max():400j]
         self.positions = np.vstack([self.X.ravel(), self.Y.ravel()])
 
         
@@ -34,7 +34,7 @@ class Kernel2d(object):
         coord_system = osr.SpatialReference()
         coord_system.ImportFromEPSG(epsg)
         out.SetProjection(coord_system.ExportToWkt())
-        out.GetRasterBand(1).WriteArray(self.Z)
+        out.GetRasterBand(1).WriteArray(self.Z.T)
 
 
     def plot(self, show_points=True):

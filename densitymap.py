@@ -86,7 +86,7 @@ class DensityMap:
             # do something useful (delete the line containing pass and
             # substitute with your code)
             data = self.collectData(self.collectOptions())
-            k = Kernel2d(np.array(data['X']),np.array(data['Y']))
+            k = Kernel2d(np.array(data['X']), np.array(data['Y']),float(self.dlg.ui.bwEdit.text()))
             k.run()
             k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
         
