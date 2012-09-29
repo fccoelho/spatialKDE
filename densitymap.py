@@ -95,8 +95,7 @@ class DensityMap:
         result = self.dlg.exec_()
         # See if OK was pressed
         if result == 1:
-            # do something useful (delete the line containing pass and
-            # substitute with your code)
+            # do the calculations
             data = self.collectData(self.collectOptions())
             try:
                 bw = float(self.dlg.ui.bwEdit.text())
@@ -198,5 +197,6 @@ class DensityMap:
         opt["io"]["layerpointer"] = self.layer_pointer_list[self.dlg.ui.layerComboBox.currentIndex()]
         opt["io"]["layername"] = "%s" % self.layer_pointer_list[self.dlg.ui.layerComboBox.currentIndex()].name()
         opt["io"]["bandwidth"] = self.dlg.ui.bwEdit.text()
+        opt["io"]["values"] = str(self.dlg.ui.zcomboBox.currentText()) #layer with z values for the points
         print opt
         return opt

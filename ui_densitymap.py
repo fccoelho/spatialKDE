@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_densitymap.ui'
 #
-# Created: Fri Sep 28 11:03:15 2012
+# Created: Sat Sep 29 12:05:32 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_DensityMap(object):
     def setupUi(self, DensityMap):
         DensityMap.setObjectName(_fromUtf8("DensityMap"))
-        DensityMap.resize(276, 213)
+        DensityMap.resize(309, 288)
         self.formLayout = QtGui.QFormLayout(DensityMap)
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.label = QtGui.QLabel(DensityMap)
@@ -28,42 +28,48 @@ class Ui_DensityMap(object):
         self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.layerComboBox)
         self.label_5 = QtGui.QLabel(DensityMap)
         self.label_5.setObjectName(_fromUtf8("label_5"))
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.label_5)
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.label_5)
         self.zcomboBox = QtGui.QComboBox(DensityMap)
         self.zcomboBox.setObjectName(_fromUtf8("zcomboBox"))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.zcomboBox)
+        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.zcomboBox)
         self.label_2 = QtGui.QLabel(DensityMap)
         self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_2)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_2)
         self.bwEdit = QtGui.QLineEdit(DensityMap)
         self.bwEdit.setEnabled(True)
         self.bwEdit.setToolTip(_fromUtf8(""))
         self.bwEdit.setObjectName(_fromUtf8("bwEdit"))
-        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.bwEdit)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.bwEdit)
         self.autobwCheckBox = QtGui.QCheckBox(DensityMap)
         self.autobwCheckBox.setChecked(True)
         self.autobwCheckBox.setObjectName(_fromUtf8("autobwCheckBox"))
-        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.autobwCheckBox)
+        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.autobwCheckBox)
         self.label_3 = QtGui.QLabel(DensityMap)
         self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.formLayout.setWidget(7, QtGui.QFormLayout.LabelRole, self.label_3)
         self.rasterEdit = QtGui.QLineEdit(DensityMap)
         self.rasterEdit.setObjectName(_fromUtf8("rasterEdit"))
-        self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.rasterEdit)
+        self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.rasterEdit)
         self.label_4 = QtGui.QLabel(DensityMap)
         self.label_4.setObjectName(_fromUtf8("label_4"))
-        self.formLayout.setWidget(6, QtGui.QFormLayout.LabelRole, self.label_4)
+        self.formLayout.setWidget(8, QtGui.QFormLayout.LabelRole, self.label_4)
         self.sizeSpinBox = QtGui.QSpinBox(DensityMap)
         self.sizeSpinBox.setMaximum(1000)
         self.sizeSpinBox.setSingleStep(10)
         self.sizeSpinBox.setProperty("value", 400)
         self.sizeSpinBox.setObjectName(_fromUtf8("sizeSpinBox"))
-        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.sizeSpinBox)
+        self.formLayout.setWidget(8, QtGui.QFormLayout.FieldRole, self.sizeSpinBox)
         self.buttonBox = QtGui.QDialogButtonBox(DensityMap)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.formLayout.setWidget(7, QtGui.QFormLayout.SpanningRole, self.buttonBox)
+        self.formLayout.setWidget(10, QtGui.QFormLayout.SpanningRole, self.buttonBox)
+        self.checkBox = QtGui.QCheckBox(DensityMap)
+        self.checkBox.setObjectName(_fromUtf8("checkBox"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.checkBox)
+        self.checkBox_2 = QtGui.QCheckBox(DensityMap)
+        self.checkBox_2.setObjectName(_fromUtf8("checkBox_2"))
+        self.formLayout.setWidget(9, QtGui.QFormLayout.FieldRole, self.checkBox_2)
 
         self.retranslateUi(DensityMap)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), DensityMap.accept)
@@ -79,4 +85,6 @@ class Ui_DensityMap(object):
         self.label_3.setText(QtGui.QApplication.translate("DensityMap", "File Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.rasterEdit.setText(QtGui.QApplication.translate("DensityMap", "kde.tif", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("DensityMap", "Size (pixels):", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBox.setText(QtGui.QApplication.translate("DensityMap", "Only selected points", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkBox_2.setText(QtGui.QApplication.translate("DensityMap", "Load raster when done", None, QtGui.QApplication.UnicodeUTF8))
 
