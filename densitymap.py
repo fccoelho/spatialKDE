@@ -29,6 +29,10 @@ import resources_rc
 from densitymapdialog import DensityMapDialog
 from kernel import Kernel2d
 import numpy as np
+import pdb
+
+def test_signal(i):
+    print "Signal Received!"
 
 class DensityMap:
 
@@ -42,7 +46,9 @@ class DensityMap:
         # initialize locale
         localePath = ""
         locale = QSettings().value("locale/userLocale").toString()[0:2]
-       
+        
+        #~ pyqtRemoveInputHook()
+        #~ pdb.set_trace()
         if QFileInfo(self.plugin_dir).exists():
             localePath = self.plugin_dir + "/i18n/densitymap_" + locale + ".qm"
 
@@ -64,7 +70,13 @@ class DensityMap:
             u"Kernel Density", self.iface.mainWindow())
         # connect the action to the run method
         QObject.connect(self.action, SIGNAL("triggered()"), self.run)
-        QObject.connect(self.dlg.ui.autobwCheckBox,SIGNAL("stateChanged"),self.update_bw)
+        # Connect the autobw signal
+        self.dlg.ui.autobwCheckBox.stateChanged.connect(self.update_bw)
+        #Connect layer selction signal to 
+        self.dlg.ui.layerComboBox.currentIndexChanged.connect(self.update_attribute_combo)
+        self.dlg.ui.layerComboBox.activated.connect(test_signal)
+        #QObject.connect(self.dlg.ui.zcomboBox, SIGNAL("currentIndexChanged(int)"),self.update_attribute_combo)
+        
 
         # Add toolbar button and menu item
         self.iface.addToolBarIcon(self.action)
@@ -108,9 +120,10 @@ class DensityMap:
         QgsMapLayerRegistry.instance().addMapLayer(rlayer)
         
           
-    
-    def update_bw(self):
+    #~ @pyqtSlot(int, name="on_autobwCheckBox_stateChanged")
+    def update_bw(self,i=0):
         """
+        Enable/disable bandwith specification box
         """
         if self.dlg.ui.autobwCheckBox.isChecked():
             self.dlg.ui.bwEdit.setEnabled(False)
@@ -133,6 +146,21 @@ class DensityMap:
             #~ self.emit(SIGNAL("rejected"), self.close)
             #~ self.kill()
 
+    #~ @pyqtSlot(int, name="on_layerComboBox_currentIndexChanged")
+    def update_attribute_combo(self,i=0):
+        """
+        Fills the zcomboBox based on the attributes of the layer chosen
+        """
+        print "signal working!"
+        # the line means: catch the address of the layer which full name has the index in combobox.
+        layer = self.layermap[self.layer_list[self.dlg.ui.layerComboBox.currentIndex()]]
+        provider = layer.dataProvider()
+        fieldmap = provider.fields()
+        self.dlg.ui.zcomboBox.clear()
+        self.dlg.ui.zcomboBox.addItem("None")
+        for (k,attr) in fieldmap.iteritems():
+          self.dlg.ui.zcomboBox.addItem(attr.name())
+        
     def collectData(self, opt):
         """
         Extracts geometries from selected layer.
