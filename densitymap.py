@@ -31,8 +31,7 @@ from kernel import Kernel2d
 import numpy as np
 import pdb
 
-def test_signal(i):
-    print "Signal Received!"
+
 
 class DensityMap:
 
@@ -62,6 +61,8 @@ class DensityMap:
         self.layer_list = []
         self.layer_pointer_list = []
         self.update_dialog()
+        self.update_bw()
+        self.update_attribute_combo()
    
 
     def initGui(self):
@@ -72,10 +73,8 @@ class DensityMap:
         QObject.connect(self.action, SIGNAL("triggered()"), self.run)
         # Connect the autobw signal
         self.dlg.ui.autobwCheckBox.stateChanged.connect(self.update_bw)
-        #Connect layer selction signal to 
+        #Connect layer selection signal to 
         self.dlg.ui.layerComboBox.currentIndexChanged.connect(self.update_attribute_combo)
-        self.dlg.ui.layerComboBox.activated.connect(test_signal)
-        #QObject.connect(self.dlg.ui.zcomboBox, SIGNAL("currentIndexChanged(int)"),self.update_attribute_combo)
         
 
         # Add toolbar button and menu item
@@ -96,12 +95,15 @@ class DensityMap:
         # See if OK was pressed
         if result == 1:
             # do the calculations
-            data = self.collectData(self.collectOptions())
+            points,values = self.collectData(self.collectOptions())
             try:
                 bw = float(self.dlg.ui.bwEdit.text())
             except:
                 bw = None
-            k = Kernel2d(np.array(data['X']), np.array(data['Y']),bw,self.dlg.ui.sizeSpinBox.value())
+            if values != []:
+                k = Kernel2d(np.array(points['X']), np.array(points['Y']),np.array(values),bw,self.dlg.ui.sizeSpinBox.value())
+            else:
+                k = Kernel2d(np.array(points['X']), np.array(points['Y']),bw=bw,size=self.dlg.ui.sizeSpinBox.value())
             k.run()
             k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
         
@@ -118,8 +120,6 @@ class DensityMap:
         #Adding layer to the registry:
         QgsMapLayerRegistry.instance().addMapLayer(rlayer)
         
-          
-    #~ @pyqtSlot(int, name="on_autobwCheckBox_stateChanged")
     def update_bw(self,i=0):
         """
         Enable/disable bandwith specification box
@@ -142,15 +142,13 @@ class DensityMap:
 
         if self.dlg.ui.layerComboBox.count() == 0 and not silent:
             QMessageBox.critical(self.dlg, "Kernel Density Map plugin", "No point layers available! Load at least one and re-run.")
-            #~ self.emit(SIGNAL("rejected"), self.close)
-            #~ self.kill()
+            
 
     #~ @pyqtSlot(int, name="on_layerComboBox_currentIndexChanged")
     def update_attribute_combo(self,i=0):
         """
         Fills the zcomboBox based on the attributes of the layer chosen
         """
-        print "signal working!"
         # the line means: catch the address of the layer which full name has the index in combobox.
         layer = self.layermap[self.layer_list[self.dlg.ui.layerComboBox.currentIndex()]]
         provider = layer.dataProvider()
@@ -164,9 +162,9 @@ class DensityMap:
         """
         Extracts geometries from selected layer.
         """
-        idDict = []
         xDict = []
         yDict = []
+        values = []
         geomData = {'X': xDict,  'Y': yDict}
         # use QGis tools to extract info from layer
         layer = opt["io"]["layerpointer"]
@@ -176,6 +174,10 @@ class DensityMap:
         self.srid = srs.srsid()
         allAttrs = provider.attributeIndexes()
         fields = provider.fields()
+        fieldID = None
+        for (k, v) in fields.iteritems():
+            if v.name() == opt["io"]["zvalue"]: 
+                fieldID = k 
         provider.select(allAttrs)
         feat = QgsFeature()
         while provider.nextFeature(feat):
@@ -183,8 +185,20 @@ class DensityMap:
             pointmp = geom.asPoint()
             xDict.append(pointmp.x())
             yDict.append(pointmp.y())
+            attrs = feat.attributeMap()
+            try:
+                for (k,attr) in attrs.iteritems(): # i.e., for each pair key-value of the attributes of that feature
+                    if k == fieldID:
+                        at = str(attr.toString())
+                        if not at:
+                            at = np.nan
+                        else:
+                            v = float(at)
+                        values.append(v)
+            except ValueError:
+                QMessageBox.critical(self.dlg, "Kernel Density Map plugin", "Can't convert value '%s' to floats please choose a numeric variable"%at)
 
-        return geomData
+        return geomData, values
 
     def collectOptions(self):
         """
@@ -197,6 +211,6 @@ class DensityMap:
         opt["io"]["layerpointer"] = self.layer_pointer_list[self.dlg.ui.layerComboBox.currentIndex()]
         opt["io"]["layername"] = "%s" % self.layer_pointer_list[self.dlg.ui.layerComboBox.currentIndex()].name()
         opt["io"]["bandwidth"] = self.dlg.ui.bwEdit.text()
-        opt["io"]["values"] = str(self.dlg.ui.zcomboBox.currentText()) #layer with z values for the points
-        print opt
+        opt["io"]["zvalue"] = str(self.dlg.ui.zcomboBox.currentText()) #layer with z values for the points
+        #print opt
         return opt

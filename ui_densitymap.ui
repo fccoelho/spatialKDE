@@ -44,7 +44,7 @@
    <item row="5" column="1">
     <widget class="QLineEdit" name="bwEdit">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="toolTip">
       <string/>
@@ -116,6 +116,9 @@
     <widget class="QCheckBox" name="checkBox_2">
      <property name="text">
       <string>Load raster when done</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

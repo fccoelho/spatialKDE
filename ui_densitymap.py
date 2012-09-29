@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_densitymap.ui'
 #
-# Created: Sat Sep 29 12:05:32 2012
+# Created: Sat Sep 29 13:18:17 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,7 +36,7 @@ class Ui_DensityMap(object):
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_2)
         self.bwEdit = QtGui.QLineEdit(DensityMap)
-        self.bwEdit.setEnabled(True)
+        self.bwEdit.setEnabled(False)
         self.bwEdit.setToolTip(_fromUtf8(""))
         self.bwEdit.setObjectName(_fromUtf8("bwEdit"))
         self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.bwEdit)
@@ -68,6 +68,7 @@ class Ui_DensityMap(object):
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.checkBox)
         self.checkBox_2 = QtGui.QCheckBox(DensityMap)
+        self.checkBox_2.setChecked(True)
         self.checkBox_2.setObjectName(_fromUtf8("checkBox_2"))
         self.formLayout.setWidget(9, QtGui.QFormLayout.FieldRole, self.checkBox_2)
 

@@ -9,7 +9,7 @@ class Kernel2d(object):
     def __init__(self, lon, lat,z=None, bw=None, size=400):
         self.x = lon
         self.y = lat
-        self.z = z
+        self.z = np.nan_to_num(z)
         self.bw = bw
         self.values = np.vstack([self.x, self.y])
         self.X, self.Y = np.mgrid[self.x.min():self.x.max():size*1j,
@@ -22,16 +22,16 @@ class Kernel2d(object):
         print "==> Factor: ", self.kernel.factor
         self.Z = np.reshape(self.kernel(self.positions).T, self.X.shape)
         if self.z is not None:
-			self.Z = self._weigh()
+            self.Z = self._weigh()
         return self.X, self.Y, self.Z
     
     def _weigh(self):
-		"""
-		Weigh the KDE with values provided for each point.
-		"""
-		weights = interpolate.griddata(np.array([self.x, self.y]), self.z,(self.X,self.Y),method='linear')
-		weights /= np.nansum(weights)
-		return self.Z * weights 
+        """
+        Weigh the KDE with values provided for each point.
+        """
+        weights = interpolate.griddata(np.array([self.x, self.y]).T, self.z,(self.X,self.Y),method='linear')
+        weights /= np.nansum(weights)
+        return self.Z * weights 
         
     def to_geotiff(self,fname, epsg):
         '''
