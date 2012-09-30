@@ -65,9 +65,9 @@ class DensityMap:
         self.layer_pointer_list = []
         self.dlg.dialog_opened.connect(self.set_it_all_up)
         self.set_it_all_up()
-#        self.progress = QProgressDialog("Calculating Density...","Wait",0,4)
-#        self.progress.setWindowModality(Qt.WindowModal);
-#        self.progress.setWindowTitle("2D KDE")
+        self.progress = QProgressDialog("Calculating Density...","Wait",0,4)
+        self.progress.setWindowModality(Qt.WindowModal);
+        self.progress.setWindowTitle("2D KDE")
         self.update_dialog(True)
         self.update_bw()
         self.update_attribute_combo()
@@ -110,10 +110,10 @@ class DensityMap:
         # See if OK was pressed
         if result == 1:
             # do the calculations
-#            self.progress.open()
-#            self.progress.setLabelText("Setting up analysis...")
+            self.progress.open()
+            self.progress.setLabelText("Setting up analysis...")
             points,values = self.collectData(self.collectOptions())
-            print len(points['X']),min(points['X']),max(points['X'])
+            
             try:
                 bw = float(self.dlg.ui.bwEdit.text())
             except:
@@ -123,10 +123,10 @@ class DensityMap:
             else:
                 k = Kernel2d(np.array(points['X']), np.array(points['Y']),bw=bw,size=self.dlg.ui.sizeSpinBox.value())
             k.run()
-#            self.progress.setValue(3)
-#            self.progress.setLabelText("Saving GeoTiff...")
+            self.progress.setValue(3)
+            self.progress.setLabelText("Saving GeoTiff...")
             k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
-#            self.progress.setValue(4)
+            self.progress.setValue(4)
         
     def read_kde(self,fname):
         """
@@ -198,7 +198,6 @@ class DensityMap:
         self.srid = srs.srsid()
         # get selected ids
         sel_features = layer.selectedFeatures() #may use selectedFeaturesIds() to minimize memory usage
-        print "Selected: ", len(sel_features)
 #        pyqtRemoveInputHook()
 #        pdb.set_trace()
         allAttrs = provider.attributeIndexes()
@@ -211,7 +210,6 @@ class DensityMap:
             print "Selected: ",layer.selectedFeatureCount()
             return self.collect_selected_data(sel_features, geomData, 
                                               values, fieldID)
-        print "Doing the Whole dataset"
         provider.select(allAttrs)
         feat = QgsFeature()
         while provider.nextFeature(feat):
@@ -232,15 +230,14 @@ class DensityMap:
             except ValueError:
                 QMessageBox.critical(self.dlg, "Kernel Density Map plugin",
                                      "Can't convert value '%s' to floats please choose a numeric variable"%at)
-#        self.progress.setValue(2)
-#        self.progress.setLabelText("Calculating Kernel...")
+        self.progress.setValue(2)
+        self.progress.setLabelText("Calculating Kernel...")
         return geomData, values
 
     def collect_selected_data(self, sel_feat, geomdata, values, fieldID):
         """
         Collect only selected points
         """
-        print "Doing selected points "
         for feat in sel_feat:
             geom = feat.geometry()
             pointmp = geom.asPoint()
@@ -259,6 +256,8 @@ class DensityMap:
             except ValueError:
                 QMessageBox.critical(self.dlg, "Kernel Density Map plugin",
                                      "Can't convert value '%s' to floats please choose a numeric variable"%at)
+        self.progress.setValue(2)
+        self.progress.setLabelText("Calculating Kernel...")
         return geomdata,values
         
     def collectOptions(self):
@@ -274,6 +273,6 @@ class DensityMap:
         opt["io"]["bandwidth"] = self.dlg.ui.bwEdit.text()
         opt["io"]["zvalue"] = str(self.dlg.ui.zcomboBox.currentText()) #layer with z values for the points
         #print opt
-#        self.progress.setValue(1)
-#        self.progress.setLabelText("Loading data...")
+        self.progress.setValue(1)
+        self.progress.setLabelText("Loading data...")
         return opt
