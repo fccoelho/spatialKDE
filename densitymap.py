@@ -60,6 +60,9 @@ class DensityMap:
         self.layermap = QgsMapLayerRegistry.instance().mapLayers()
         self.layer_list = []
         self.layer_pointer_list = []
+        self.progress = QProgressDialog("Calculating Density...","Wait",0,4)
+        self.progress.setWindowModality(Qt.WindowModal);
+        self.progress.setWindowTitle("2D KDE")
         self.update_dialog()
         self.update_bw()
         self.update_attribute_combo()
@@ -95,6 +98,8 @@ class DensityMap:
         # See if OK was pressed
         if result == 1:
             # do the calculations
+            self.progress.open()
+            self.progress.setLabelText("Setting up analysis...")
             points,values = self.collectData(self.collectOptions())
             try:
                 bw = float(self.dlg.ui.bwEdit.text())
@@ -105,7 +110,10 @@ class DensityMap:
             else:
                 k = Kernel2d(np.array(points['X']), np.array(points['Y']),bw=bw,size=self.dlg.ui.sizeSpinBox.value())
             k.run()
+            self.progress.setValue(3)
+            self.progress.setLabelText("Saving GeoTiff...")
             k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
+            self.progress.setValue(4)
         
     def read_kde(self,fname):
         """
@@ -197,7 +205,8 @@ class DensityMap:
                         values.append(v)
             except ValueError:
                 QMessageBox.critical(self.dlg, "Kernel Density Map plugin", "Can't convert value '%s' to floats please choose a numeric variable"%at)
-
+        self.progress.setValue(2)
+        self.progress.setLabelText("Calculating Kernel...")
         return geomData, values
 
     def collectOptions(self):
@@ -213,4 +222,6 @@ class DensityMap:
         opt["io"]["bandwidth"] = self.dlg.ui.bwEdit.text()
         opt["io"]["zvalue"] = str(self.dlg.ui.zcomboBox.currentText()) #layer with z values for the points
         #print opt
+        self.progress.setValue(1)
+        self.progress.setLabelText("Loading data...")
         return opt
