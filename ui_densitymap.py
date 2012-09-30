@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_densitymap.ui'
 #
-# Created: Sat Sep 29 22:27:46 2012
+# Created: Sun Sep 30 07:06:34 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,9 @@ class Ui_DensityMap(object):
         self.layerComboBox = QtGui.QComboBox(DensityMap)
         self.layerComboBox.setObjectName(_fromUtf8("layerComboBox"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.layerComboBox)
-        self.checkBox = QtGui.QCheckBox(DensityMap)
-        self.checkBox.setObjectName(_fromUtf8("checkBox"))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.checkBox)
+        self.selectedCheckBox = QtGui.QCheckBox(DensityMap)
+        self.selectedCheckBox.setObjectName(_fromUtf8("selectedCheckBox"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.selectedCheckBox)
         self.label_5 = QtGui.QLabel(DensityMap)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_5)
@@ -81,7 +81,7 @@ class Ui_DensityMap(object):
     def retranslateUi(self, DensityMap):
         DensityMap.setWindowTitle(QtGui.QApplication.translate("DensityMap", "Kernel Density Map", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("DensityMap", "Point layer:", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkBox.setText(QtGui.QApplication.translate("DensityMap", "Only selected points", None, QtGui.QApplication.UnicodeUTF8))
+        self.selectedCheckBox.setText(QtGui.QApplication.translate("DensityMap", "Only selected points", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("DensityMap", "Values:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("DensityMap", "Bandwith:", None, QtGui.QApplication.UnicodeUTF8))
         self.autobwCheckBox.setText(QtGui.QApplication.translate("DensityMap", "auto", None, QtGui.QApplication.UnicodeUTF8))

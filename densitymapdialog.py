@@ -24,6 +24,7 @@ from PyQt4 import QtCore, QtGui
 from ui_densitymap import Ui_DensityMap
 # create the dialog for zoom to point
 class DensityMapDialog(QtGui.QDialog):
+    dialog_opened = QtCore.pyqtSignal()
     def __init__(self):
         QtGui.QDialog.__init__(self)
         # Set up the user interface from Designer.

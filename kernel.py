@@ -9,7 +9,7 @@ class Kernel2d(object):
     def __init__(self, lon, lat,z=None, bw=None, size=400):
         self.x = lon
         self.y = lat
-        self.z = np.nan_to_num(z)
+        self.z = z if z is None else np.nan_to_num(z)
         self.bw = bw
         self.values = np.vstack([self.x, self.y])
         self.X, self.Y = np.mgrid[self.x.min():self.x.max():size*1j,

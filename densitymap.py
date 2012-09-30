@@ -29,9 +29,12 @@ import resources_rc
 from densitymapdialog import DensityMapDialog
 from kernel import Kernel2d
 import numpy as np
+import types
 import pdb
 
-
+def refresh(self,event):
+    self.dialog_opened.emit()
+    
 
 class DensityMap:
 
@@ -46,8 +49,7 @@ class DensityMap:
         localePath = ""
         locale = QSettings().value("locale/userLocale").toString()[0:2]
         
-        #~ pyqtRemoveInputHook()
-        #~ pdb.set_trace()
+        self.dlg.showEvent = types.MethodType(refresh, self.dlg)
         if QFileInfo(self.plugin_dir).exists():
             localePath = self.plugin_dir + "/i18n/densitymap_" + locale + ".qm"
 
@@ -57,13 +59,16 @@ class DensityMap:
 
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
+
         self.layermap = QgsMapLayerRegistry.instance().mapLayers()
         self.layer_list = []
         self.layer_pointer_list = []
-        self.progress = QProgressDialog("Calculating Density...","Wait",0,4)
-        self.progress.setWindowModality(Qt.WindowModal);
-        self.progress.setWindowTitle("2D KDE")
-        self.update_dialog()
+        self.dlg.dialog_opened.connect(self.set_it_all_up)
+        self.set_it_all_up()
+#        self.progress = QProgressDialog("Calculating Density...","Wait",0,4)
+#        self.progress.setWindowModality(Qt.WindowModal);
+#        self.progress.setWindowTitle("2D KDE")
+        self.update_dialog(True)
         self.update_bw()
         self.update_attribute_combo()
    
@@ -78,11 +83,18 @@ class DensityMap:
         self.dlg.ui.autobwCheckBox.stateChanged.connect(self.update_bw)
         #Connect layer selection signal to 
         self.dlg.ui.layerComboBox.currentIndexChanged.connect(self.update_attribute_combo)
-        
 
         # Add toolbar button and menu item
         self.iface.addToolBarIcon(self.action)
         self.iface.addPluginToMenu(u"&Kernel Density", self.action)
+        
+    def set_it_all_up(self):
+        """
+        Reads data and updates dialog
+        """
+        self.update_dialog()
+        self.update_bw()
+        self.update_attribute_combo()
 
     def unload(self):
         # Remove the plugin menu item and icon
@@ -98,9 +110,10 @@ class DensityMap:
         # See if OK was pressed
         if result == 1:
             # do the calculations
-            self.progress.open()
-            self.progress.setLabelText("Setting up analysis...")
+#            self.progress.open()
+#            self.progress.setLabelText("Setting up analysis...")
             points,values = self.collectData(self.collectOptions())
+            print len(points['X']),min(points['X']),max(points['X'])
             try:
                 bw = float(self.dlg.ui.bwEdit.text())
             except:
@@ -110,10 +123,10 @@ class DensityMap:
             else:
                 k = Kernel2d(np.array(points['X']), np.array(points['Y']),bw=bw,size=self.dlg.ui.sizeSpinBox.value())
             k.run()
-            self.progress.setValue(3)
-            self.progress.setLabelText("Saving GeoTiff...")
+#            self.progress.setValue(3)
+#            self.progress.setLabelText("Saving GeoTiff...")
             k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
-            self.progress.setValue(4)
+#            self.progress.setValue(4)
         
     def read_kde(self,fname):
         """
@@ -157,6 +170,8 @@ class DensityMap:
         """
         Fills the zcomboBox based on the attributes of the layer chosen
         """
+        if len(self.layermap) == 0:
+            return
         # the line means: catch the address of the layer which full name has the index in combobox.
         layer = self.layermap[self.layer_list[self.dlg.ui.layerComboBox.currentIndex()]]
         provider = layer.dataProvider()
@@ -177,15 +192,26 @@ class DensityMap:
         # use QGis tools to extract info from layer
         layer = opt["io"]["layerpointer"]
         provider = layer.dataProvider()
+        # get Spatial reference system
         srs = layer.srs()
         self.epsg = srs.epsg()
         self.srid = srs.srsid()
+        # get selected ids
+        sel_features = layer.selectedFeatures() #may use selectedFeaturesIds() to minimize memory usage
+        print "Selected: ", len(sel_features)
+#        pyqtRemoveInputHook()
+#        pdb.set_trace()
         allAttrs = provider.attributeIndexes()
         fields = provider.fields()
         fieldID = None
         for (k, v) in fields.iteritems():
             if v.name() == opt["io"]["zvalue"]: 
                 fieldID = k 
+        if self.dlg.ui.selectedCheckBox.isChecked():
+            print "Selected: ",layer.selectedFeatureCount()
+            return self.collect_selected_data(sel_features, geomData, 
+                                              values, fieldID)
+        print "Doing the Whole dataset"
         provider.select(allAttrs)
         feat = QgsFeature()
         while provider.nextFeature(feat):
@@ -204,11 +230,37 @@ class DensityMap:
                             v = float(at)
                         values.append(v)
             except ValueError:
-                QMessageBox.critical(self.dlg, "Kernel Density Map plugin", "Can't convert value '%s' to floats please choose a numeric variable"%at)
-        self.progress.setValue(2)
-        self.progress.setLabelText("Calculating Kernel...")
+                QMessageBox.critical(self.dlg, "Kernel Density Map plugin",
+                                     "Can't convert value '%s' to floats please choose a numeric variable"%at)
+#        self.progress.setValue(2)
+#        self.progress.setLabelText("Calculating Kernel...")
         return geomData, values
 
+    def collect_selected_data(self, sel_feat, geomdata, values, fieldID):
+        """
+        Collect only selected points
+        """
+        print "Doing selected points "
+        for feat in sel_feat:
+            geom = feat.geometry()
+            pointmp = geom.asPoint()
+            geomdata['X'].append(pointmp.x())
+            geomdata['Y'].append(pointmp.y())
+            attrs = feat.attributeMap()
+            try:
+                for (k,attr) in attrs.iteritems(): # i.e., for each pair key-value of the attributes of that feature
+                    if k == fieldID:
+                        at = str(attr.toString())
+                        if not at:
+                            at = np.nan
+                        else:
+                            v = float(at)
+                        values.append(v)
+            except ValueError:
+                QMessageBox.critical(self.dlg, "Kernel Density Map plugin",
+                                     "Can't convert value '%s' to floats please choose a numeric variable"%at)
+        return geomdata,values
+        
     def collectOptions(self):
         """
         Collects all options in a dictionary.
@@ -222,6 +274,6 @@ class DensityMap:
         opt["io"]["bandwidth"] = self.dlg.ui.bwEdit.text()
         opt["io"]["zvalue"] = str(self.dlg.ui.zcomboBox.currentText()) #layer with z values for the points
         #print opt
-        self.progress.setValue(1)
-        self.progress.setLabelText("Loading data...")
+#        self.progress.setValue(1)
+#        self.progress.setLabelText("Loading data...")
         return opt
