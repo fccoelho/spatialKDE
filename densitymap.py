@@ -107,11 +107,11 @@ class DensityMap:
             k.run()
             k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
         
-    def read_kde(self):
+    def read_kde(self,fname):
         """
         Loads the generated tiff file and shows on the canvas.
         """
-        fileName = "/path/to/raster/file.tif"
+        fileName = fname
         fileInfo = QFileInfo(fileName)
         baseName = fileInfo.baseName()
         rlayer = QgsRasterLayer(fileName, baseName)

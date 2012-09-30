@@ -11,7 +11,7 @@
 [general]
 name=2d Kernel Density Map
 qgisMinimumVersion=1.8
-description=This plugin calculates 2D gaussian kernel density from a point layer
+description=This plugin calculates 2D gaussian kernel density from a point layer. Also supports weightin the density by values at the points.
 version=0.1
 
 # end of mandatory metadata
@@ -22,11 +22,11 @@ version=0.1
 # changelog=
 
 # tags are comma separated with spaces allowed
-tags=
+tags= statistics
 
 homepage=
 tracker=
-repository=
+repository=https://github.com/fccoelho/spatialKDE
 icon=icon.png
 # experimental flag
 experimental=True
