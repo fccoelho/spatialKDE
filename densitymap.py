@@ -65,7 +65,7 @@ class DensityMap:
         self.layer_list = []
         self.layer_pointer_list = []
         self.dlg.dialog_opened.connect(self.set_it_all_up)
-        self.project_path = QgsProject.instance().readPath("./")
+        self.project_path = str(QgsProject.instance().readPath("./"))
         self.dlg.ui.rasterEdit.setText(os.path.join(self.project_path,"kde.tif"))
         self.progress = QProgressDialog("Calculating Density...","Wait",0,4)
         self.progress.setWindowModality(Qt.WindowModal);
@@ -127,12 +127,16 @@ class DensityMap:
             k.run()
             self.progress.setValue(3)
             self.progress.setLabelText("Saving GeoTiff...")
-            k.to_geotiff(str(self.dlg.ui.rasterEdit.text()), self.epsg)
+            out_path = str(self.dlg.ui.rasterEdit.text())
+            k.to_geotiff(out_path, self.epsg)
+            self.read_kde(out_path)
             self.progress.setValue(4)
+            
+        
         
     def read_kde(self,fname):
         """
-        Loads the generated tiff file and shows on the canvas.
+        Loads the generated tiff file and shows it on the canvas.
         """
         fileName = fname
         fileInfo = QFileInfo(fileName)
