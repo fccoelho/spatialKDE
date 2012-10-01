@@ -30,6 +30,7 @@ from densitymapdialog import DensityMapDialog
 from kernel import Kernel2d
 import numpy as np
 import types
+import os
 import pdb
 
 def refresh(self,event):
@@ -64,7 +65,8 @@ class DensityMap:
         self.layer_list = []
         self.layer_pointer_list = []
         self.dlg.dialog_opened.connect(self.set_it_all_up)
-        self.set_it_all_up()
+        self.project_path = QgsProject.instance().readPath("./")
+        self.dlg.ui.rasterEdit.setText(os.path.join(self.project_path,"kde.tif"))
         self.progress = QProgressDialog("Calculating Density...","Wait",0,4)
         self.progress.setWindowModality(Qt.WindowModal);
         self.progress.setWindowTitle("2D KDE")
