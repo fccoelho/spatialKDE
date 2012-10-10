@@ -21,7 +21,7 @@ class Kernel2d(object):
         self.kernel = st.gaussian_kde(self.values, self.bw)
         print "==> Factor: ", self.kernel.factor
         self.Z = np.reshape(self.kernel(self.positions).T, self.X.shape)
-        if self.z is not None:
+        if self.z is not None: #Small z is the variable associates with z values for points
             self.Z = self._weigh()
         return self.X, self.Y, self.Z
     
@@ -29,7 +29,7 @@ class Kernel2d(object):
         """
         Weigh the KDE with values provided for each point.
         """
-        weights = interpolate.griddata(np.array([self.x, self.y]).T, self.z,(self.X,self.Y),method='linear')
+        weights = interpolate.griddata(np.array([self.x, self.y]).T, self.z,(self.X,self.Y),method='cubic')
         weights /= np.nansum(weights)
         return self.Z * weights 
         
