@@ -29,7 +29,7 @@ class Kernel2d(object):
         """
         Weigh the KDE with values provided for each point.
         """
-        weights = interpolate.griddata(np.array([self.x, self.y]).T, self.z,(self.X,self.Y),method='linear')
+        weights = interpolate.griddata(np.array([self.x, self.y]).T, self.z,(self.X,self.Y),method='cubic')
         weights /= np.nansum(weights)
         return self.Z * weights 
         
