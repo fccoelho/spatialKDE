@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_densitymap.ui'
 #
-# Created: Sun Sep 30 07:06:34 2012
+# Created: Thu Oct 11 10:21:10 2012
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,8 +58,9 @@ class Ui_DensityMap(object):
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.formLayout.setWidget(8, QtGui.QFormLayout.LabelRole, self.label_4)
         self.sizeSpinBox = QtGui.QSpinBox(DensityMap)
-        self.sizeSpinBox.setMaximum(1000)
-        self.sizeSpinBox.setSingleStep(10)
+        self.sizeSpinBox.setMinimum(-1)
+        self.sizeSpinBox.setMaximum(10000)
+        self.sizeSpinBox.setSingleStep(50)
         self.sizeSpinBox.setProperty("value", 400)
         self.sizeSpinBox.setObjectName(_fromUtf8("sizeSpinBox"))
         self.formLayout.setWidget(8, QtGui.QFormLayout.FieldRole, self.sizeSpinBox)

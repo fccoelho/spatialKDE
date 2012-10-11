@@ -60,9 +60,9 @@ class Kernel2d(object):
         plt.show()
         
 if __name__=="__main__":
-    d = dados_corte()
-    print d.shape
-    #~ m1, m2 = gen_random_data()
+    #~ d = dados_corte()
+    #~ print d.shape
+    m1, m2 = gen_random_data()
     m1,m2 = d[:,1],d[:,0]
     k = Kernel2d(m1,m2,.1)
     k.plot()
