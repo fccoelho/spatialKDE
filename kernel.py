@@ -6,10 +6,16 @@ from osgeo import gdal, osr
     
     
 class Kernel2d(object):
-    def __init__(self, lon, lat,z=None, bw=None, size=400):
+    def __init__(self, lon, lat,zvals=None, bw=None, size=400):
         self.x = lon
         self.y = lat
-        self.z = z if z is None else np.nan_to_num(z)
+        if zvals is None:
+            self.zvals = None
+        else:
+            zvals = np.ma.fix_invalid(zvals)
+            self.zvals = zvals.filled(0)
+            self.zvals = self.zvals - min(self.zvals) #make z positive with minimum at 0
+        
         self.bw = bw
         self.values = np.vstack([self.x, self.y])
         self.X, self.Y = np.mgrid[self.x.min():self.x.max():size*1j,
@@ -21,17 +27,23 @@ class Kernel2d(object):
         self.kernel = st.gaussian_kde(self.values, self.bw)
         print "==> Factor: ", self.kernel.factor
         self.Z = np.reshape(self.kernel(self.positions).T, self.X.shape)
-        if self.z is not None: #Small z is the variable associates with z values for points
+        if self.zvals is not None: #Small z is the variable associates with z values for points
             self.Z = self._weigh()
+        self.Z = self.Z.clip(0) * 100.0/self.Z.max()#making sure there are no negative values
         return self.X, self.Y, self.Z
     
     def _weigh(self):
         """
         Weigh the KDE with values provided for each point.
         """
-        weights = interpolate.griddata(np.array([self.x, self.y]).T, self.z,(self.X,self.Y),method='cubic')
+        #print self.zvals
+        #~ weights = interpolate.griddata(np.array([self.x, self.y]).T, self.zvals,(self.X,self.Y),method='cubic')
+        rbf = interpolate.Rbf(self.x,self.y,self.zvals, function='linear')
+        weights = rbf(self.X,self.Y)
+        #print weights, self.Z
         weights /= np.nansum(weights)
-        return self.Z * weights 
+        Z = self.Z * weights
+        return Z
         
     def to_geotiff(self,fname, epsg):
         '''
