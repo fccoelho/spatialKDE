@@ -14,3 +14,6 @@ This plugins defaults to calculationg the Density over all the points in the sel
 Known Issues
 ------------
 * Please unload and reload the plugin after loading new point layers so that the plugin can ¨see¨ them.
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fccoelho/spatialkde/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
